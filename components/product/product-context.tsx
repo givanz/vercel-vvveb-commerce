@@ -5,13 +5,14 @@ import React, { createContext, useContext, useMemo, useOptimistic } from 'react'
 
 type ProductState = {
   [key: string]: string;
-} & {
   image?: string;
+  productVariantId?: string;
+  options?:string;
 };
 
 type ProductContextType = {
   state: ProductState;
-  updateOption: (name: string, value: string) => ProductState;
+  updateOption: (name: string, value: string, productVariantId: string, options:string) => ProductState;
   updateImage: (index: string) => ProductState;
 };
 
@@ -36,10 +37,11 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
     })
   );
 
-  const updateOption = (name: string, value: string) => {
-    const newState = { [name]: value };
+  const updateOption = (name: string, value: string, productVariantId: string, options:string) => {
+    const newState = { [name]: value, productVariantId, options  };
+
     setOptimisticState(newState);
-    return { ...state, ...newState };
+    return { ...state, ...newState  };
   };
 
   const updateImage = (index: string) => {
@@ -48,7 +50,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
     return { ...state, ...newState };
   };
 
-  const value = useMemo(
+   const value = useMemo(
     () => ({
       state,
       updateOption,

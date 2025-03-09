@@ -1,20 +1,19 @@
 import type { Metadata } from 'next';
 
-import Prose from 'components/prose';
-import { getPage } from 'lib/shopify';
+import { getPage } from 'lib/vvveb';
 import { notFound } from 'next/navigation';
 
 export async function generateMetadata(props: {
-  params: Promise<{ page: string }>;
+  params: Promise<{ post: string }>;
 }): Promise<Metadata> {
   const params = await props.params;
-  const page = await getPage(params.page);
+  const page = await getPage(params.post);
 
   if (!page) return notFound();
 
   return {
-    title: page.seo?.title || page.title,
-    description: page.seo?.description || page.bodySummary,
+    title: page.name,
+    description: page.content,
     openGraph: {
       publishedTime: page.createdAt,
       modifiedTime: page.updatedAt,
@@ -23,18 +22,19 @@ export async function generateMetadata(props: {
   };
 }
 
-export default async function Page(props: { params: Promise<{ page: string }> }) {
+export default async function Page(props: { params: Promise<{ post: string }> }) {
   const params = await props.params;
-  const page = await getPage(params.page);
+  const page = await getPage(params.post);
 
   if (!page) return notFound();
-
+  
   return (
     <>
-      <h1 className="mb-8 text-5xl font-bold">{page.title}</h1>
-      <Prose className="mb-8" html={page.body} />
+      <h1 className="mb-8 text-5xl font-bold">{page.name}</h1>
+	    <img className="mb-8 rounded-lg" src={`${process.env.VVVEB_URL}/media/${page.image}`} />
+      <div className="mb-8" dangerouslySetInnerHTML={{__html: page.content}} />
       <p className="text-sm italic">
-        {`This document was last updated on ${new Intl.DateTimeFormat(undefined, {
+        {`This post was last updated on ${new Intl.DateTimeFormat(undefined, {
           year: 'numeric',
           month: 'long',
           day: 'numeric'

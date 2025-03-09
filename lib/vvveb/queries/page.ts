@@ -1,13 +1,13 @@
 import seoFragment from '../fragments/seo';
 
 const pageFragment = /* GraphQL */ `
-  fragment page on Page {
-    ... on Page {
-      id
-      title
-      handle
-      body
-      bodySummary
+  fragment page on PostType {
+    ... on PostType {
+      postId
+      name
+      slug
+      content
+      image
       seo {
         ...seo
       }
@@ -19,8 +19,8 @@ const pageFragment = /* GraphQL */ `
 `;
 
 export const getPageQuery = /* GraphQL */ `
-  query getPage($handle: String!) {
-    pageByHandle(handle: $handle) {
+  query getPage($slug: String!) {
+    post(slug: $slug) {
       ...page
     }
   }
@@ -28,13 +28,11 @@ export const getPageQuery = /* GraphQL */ `
 `;
 
 export const getPagesQuery = /* GraphQL */ `
-  query getPages {
-    pages(first: 100) {
-      edges {
-        node {
+  query getPages($type: String) {
+    posts(limit: 100, type: $type) {
+      nodes {
           ...page
         }
-      }
     }
   }
   ${pageFragment}

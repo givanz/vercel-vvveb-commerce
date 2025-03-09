@@ -1,47 +1,46 @@
 'use server';
 
 import { TAGS } from 'lib/constants';
-import {
-  addToCart,
-  createCart,
-  getCart,
-  removeFromCart,
-  updateCart
-} from 'lib/shopify';
+import { addToCart, createCart, getCart, removeFromCart, updateCart } from 'lib/vvveb';
+import { ProductVariant } from 'lib/vvveb/types';
 import { revalidateTag } from 'next/cache';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-export async function addItem(
-  prevState: any,
-  selectedVariantId: string | undefined
-) {
-  if (!selectedVariantId) {
+export async function addItem(prevState: any, variant: ProductVariant) {
+  
+  let cartId = (await cookies()).get('cartId')?.value;
+
+  if (!cartId || !variant) {
     return 'Error adding item to cart';
   }
-
+  
   try {
-    await addToCart([{ merchandiseId: selectedVariantId, quantity: 1 }]);
+    await addToCart(cartId, variant.productId, 1, variant.productVariantId ?? 0, variant.options ?? "");
     revalidateTag(TAGS.cart);
   } catch (e) {
     return 'Error adding item to cart';
   }
 }
 
-export async function removeItem(prevState: any, merchandiseId: string) {
+export async function removeItem(prevState: any, key: string) {
+  let cartId = (await cookies()).get('cartId')?.value;
+
+  if (!cartId) {
+    return 'Missing cart ID';
+  }
+
   try {
-    const cart = await getCart();
+    const cart = await getCart(cartId);
 
     if (!cart) {
       return 'Error fetching cart';
     }
 
-    const lineItem = cart.lines.find(
-      (line) => line.merchandise.id === merchandiseId
-    );
+    const product = cart.products.find((product) => product.key === key);
 
-    if (lineItem && lineItem.id) {
-      await removeFromCart([lineItem.id]);
+    if (product && product.key) {
+      await removeFromCart(cartId, [product.key]);
       revalidateTag(TAGS.cart);
     } else {
       return 'Item not found in cart';
@@ -54,38 +53,40 @@ export async function removeItem(prevState: any, merchandiseId: string) {
 export async function updateItemQuantity(
   prevState: any,
   payload: {
-    merchandiseId: string;
+    productId: number;
+    key: string;
+    productVariantId: number;
     quantity: number;
+    options :string;
   }
 ) {
-  const { merchandiseId, quantity } = payload;
+  let cartId = (await cookies()).get('cartId')?.value;
+
+  if (!cartId) {
+    return 'Missing cart ID';
+  }
+
+  const { key, productId, quantity, productVariantId, options } = payload;
 
   try {
-    const cart = await getCart();
+    const cart = await getCart(cartId);
 
     if (!cart) {
       return 'Error fetching cart';
     }
 
-    const lineItem = cart.lines.find(
-      (line) => line.merchandise.id === merchandiseId
-    );
+    const product = cart.products.find((item) => item.key === key);
 
-    if (lineItem && lineItem.id) {
+    if (product && product.key) {
       if (quantity === 0) {
-        await removeFromCart([lineItem.id]);
+        await removeFromCart(cartId, [product.key]);
       } else {
-        await updateCart([
-          {
-            id: lineItem.id,
-            merchandiseId,
-            quantity
-          }
-        ]);
+        await updateCart(cartId, product.key, quantity);
       }
     } else if (quantity > 0) {
       // If the item doesn't exist in the cart and quantity > 0, add it
-      await addToCart([{ merchandiseId, quantity }]);
+
+      await addToCart(cartId, Number(productId), quantity, productVariantId, options);
     }
 
     revalidateTag(TAGS.cart);
@@ -96,11 +97,13 @@ export async function updateItemQuantity(
 }
 
 export async function redirectToCheckout() {
-  let cart = await getCart();
-  redirect(cart!.checkoutUrl);
+  let cartId = (await cookies()).get('cartId')?.value;
+  let cart = await getCart(cartId);
+
+  redirect(process.env.VVVEB_URL + cart!.checkoutUrl);
 }
 
 export async function createCartAndSetCookie() {
   let cart = await createCart();
-  (await cookies()).set('cartId', cart.id!);
+  (await cookies()).set('cartId', cart.encryptedCartId!);
 }

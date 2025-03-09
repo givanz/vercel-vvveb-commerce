@@ -4,7 +4,7 @@ import FilterItemDropdown from './dropdown';
 import { FilterItem } from './item';
 
 export type ListItem = SortFilterItem | PathFilterItem;
-export type PathFilterItem = { title: string; path: string };
+export type PathFilterItem = { name: string; path: string };
 
 function FilterItemList({ list }: { list: ListItem[] }) {
   return (

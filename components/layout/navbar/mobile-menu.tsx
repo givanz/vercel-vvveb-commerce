@@ -6,7 +6,7 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import { Fragment, Suspense, useEffect, useState } from 'react';
 
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
-import { Menu } from 'lib/shopify/types';
+import { Menu } from 'lib/vvveb/types';
 import Search, { SearchSkeleton } from './search';
 
 export default function MobileMenu({ menu }: { menu: Menu[] }) {
@@ -17,13 +17,13 @@ export default function MobileMenu({ menu }: { menu: Menu[] }) {
   const closeMobileMenu = () => setIsOpen(false);
 
   useEffect(() => {
-    const handleResize = () => {
+    const slugResize = () => {
       if (window.innerWidth > 768) {
         setIsOpen(false);
       }
     };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener('resize', slugResize);
+    return () => window.removeEventListener('resize', slugResize);
   }, [isOpen]);
 
   useEffect(() => {
@@ -81,10 +81,10 @@ export default function MobileMenu({ menu }: { menu: Menu[] }) {
                     {menu.map((item: Menu) => (
                       <li
                         className="py-2 text-xl text-black transition-colors hover:text-neutral-500 dark:text-white"
-                        key={item.title}
+                        key={item.name}
                       >
-                        <Link href={item.path} prefetch={true} onClick={closeMobileMenu}>
-                          {item.title}
+                        <Link href={item.url} prefetch={true} onClick={closeMobileMenu}>
+                          {item.name}
                         </Link>
                       </li>
                     ))}

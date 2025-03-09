@@ -1,19 +1,26 @@
-export default {
-  experimental: {
-    ppr: true,
-    inlineCss: true,
-    useCache: true,
-    reactOwnerStack: true,
-    newDevOverlay: true
-  },
-  images: {
-    formats: ['image/avif', 'image/webp'],
+module.exports = {
+	 env: {
+		VVVEB_URL: process.env.VVVEB_URL,
+	  },
+	images: {
+	loader: 'custom',
+    loaderFile: './image-loader.js',	  
+    //formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'cdn.shopify.com',
-        pathname: '/s/files/**'
+        //protocol: 'http',
+        hostname: 'demo.vvveb.com',
+        //hostname: '**',
       }
     ]
-  }
-};
+  },
+  async redirects() {
+    return [
+		{
+		  source: '/shop',
+		  destination: '/search',
+		  permanent: true,
+		},
+	]
+  },
+}

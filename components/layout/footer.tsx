@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 import FooterMenu from 'components/layout/footer-menu';
 import LogoSquare from 'components/logo-square';
-import { getMenu } from 'lib/shopify';
+import { getMenu } from 'lib/vvveb';
 import { Suspense } from 'react';
 
 const { COMPANY_NAME, SITE_NAME } = process.env;
@@ -10,8 +10,8 @@ const { COMPANY_NAME, SITE_NAME } = process.env;
 export default async function Footer() {
   const currentYear = new Date().getFullYear();
   const copyrightDate = 2023 + (currentYear > 2023 ? `-${currentYear}` : '');
-  const skeleton = 'w-full h-6 animate-pulse rounded-sm bg-neutral-200 dark:bg-neutral-700';
-  const menu = await getMenu('next-js-frontend-footer-menu');
+  const skeleton = 'w-full h-6 animate-pulse rounded bg-neutral-200 dark:bg-neutral-700';
+  const menu = await getMenu('main-footer');
   const copyrightName = COMPANY_NAME || SITE_NAME || '';
 
   return (
@@ -60,8 +60,14 @@ export default async function Footer() {
             <a href="https://github.com/vercel/commerce">View the source</a>
           </p>
           <p className="md:ml-auto">
-            <a href="https://vercel.com" className="text-black dark:text-white">
-              Created by ▲ Vercel
+            <a href="https://vvveb.com">
+              Powered by 
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" className="inline-block">
+                <path
+                  fill="#50b450"
+                  d="M37.52 32.865h-2.058l-9.133-18.21h2.807l7.298 14.972 6.774-14.971h2.695zM23.837 32.889l-9.135-18.264h2.807l9.068 18.254m-14.583.01L2.86 14.626h2.808l8.973 18.254"
+                ></path>
+              </svg>
             </a>
           </p>
         </div>
