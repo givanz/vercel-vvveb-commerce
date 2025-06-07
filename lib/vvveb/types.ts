@@ -105,7 +105,10 @@ export type ProductVariant = {
   image: string;
   options: string;
   price: number;
+  oldPrice: number;
   priceCurrency: string;
+  sku: string;
+  barcode: string;
 };
 
 export type SEO = {

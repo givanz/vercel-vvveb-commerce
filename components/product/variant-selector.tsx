@@ -32,6 +32,7 @@ let opts = {};
 options.forEach((opt) => {
   opts[opt["productOptionId"]] = opt;
 });
+
   const combinations: Combination[] = variants.map((variant) => {
         //change numeric keys to string for json parse to work
       variant.options = variant.options.replace(/(\d+):/g, '"$1":');

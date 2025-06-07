@@ -16,8 +16,11 @@ const productFragment = /* GraphQL */ `
         options
         image
         price
+        oldPrice
         stockQuantity
         weight
+        sku
+        barcode        
       }
       image
       images {

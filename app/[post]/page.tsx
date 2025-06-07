@@ -31,7 +31,7 @@ export default async function Page(props: { params: Promise<{ post: string }> })
   return (
     <>
       <h1 className="mb-8 text-5xl font-bold">{page.name}</h1>
-	    <img className="mb-8 rounded-lg" src={`${process.env.VVVEB_URL}/media/${page.image}`} />
+	    <img className="mb-8 rounded-lg" src={`${process.env.VVVEB_URL}${page.image}`} />
       <div className="mb-8" dangerouslySetInnerHTML={{__html: page.content}} />
       <p className="text-sm italic">
         {`This post was last updated on ${new Intl.DateTimeFormat(undefined, {

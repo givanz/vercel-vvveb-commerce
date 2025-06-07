@@ -24,7 +24,7 @@ export default async function Pages(props: { params: Promise<{ }> }) {
           prefetch={true}
         >
           <h2 className="mb-8 text-5xl font-bold">{page.name}</h2>
-          <img className="mb-8 rounded-lg" src={`${process.env.VVVEB_URL}/media/${page.image}`} />
+          <img className="mb-8 rounded-lg" src={`${process.env.VVVEB_URL}${page.image}`} />
         </Link>
         <div className="mb-8" dangerouslySetInnerHTML={{ __html: page.content }} />
 
